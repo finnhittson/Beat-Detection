@@ -8,7 +8,7 @@ def overlap(filepath, framesize:int=1024, hop:int=128):
 	sr, data = read_wav(filepath)
 	#plot_signal(data, sr)
 	f = frames(data, framesize, hop)
-	#plot_frames(f, hop=hop)
+	#plot_frames(f, name="Frame")
 	return f
 
 def read_wav(filepath):
@@ -32,6 +32,7 @@ def low_power_spectrum(frames):
 	tappered_frames = hamming_window(frames)
 	fft_frames = np.fft.fft(tappered_frames)
 	lp = np.array(log_power(fft_frames))
+	#plot_frames(lp, name="Log Power Spectrum", scatter=True)
 	return lp, fft_frames
 
 def hamming_window(frames):
@@ -65,6 +66,7 @@ def flux(lp, fft_frames):
 
 # (4) Low-pass Filter
 
+
 # Helpers
 def plot_signal(data, sr):
 	# FIX: add two audio stream check
@@ -75,21 +77,17 @@ def plot_signal(data, sr):
 
 def plot_frames(frames, sr:int=44100, hop:int=128, name:str="Frames", scatter:str=False):
 	y = np.array([])
-	first = True
-	length = 0
-	for frame in frames:
-		if first:
-			y = frame
-			first = False
-			length += len(frame)
-		else:
-			y = np.concatenate((y, frame[128:]), axis=None)
-			length += len(frame) - 128
-	x = list(range(length))
+	for idx, frame in enumerate(frames):
+		if idx == 0: y = frame
+		else: y = np.concatenate((y, frame[128:]), axis=None)
+	y = y[:6*sr]
+	x = list(range(len(y)))
 	if scatter:
 		plt.scatter(x, y, c='k', s=0.1)
 	else:
 		plt.plot(x, y, 'k', linewidth=0.1)
+	#plt.ylim([0,20])
+	#plt.yticks([0,5,10,15,20])
 	plt.title(name)
 	plt.show()
 
