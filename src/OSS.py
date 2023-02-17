@@ -8,7 +8,7 @@ def overlap(filepath, framesize:int=1024, hop:int=128):
 	sr, data = read_wav(filepath)
 	#plot_signal(data, sr)
 	f = frames(data, framesize, hop)
-	#plot_frames(f, name="Frame")
+	#plot_frames(f, title="Frame")
 	return f
 
 def read_wav(filepath):
@@ -32,7 +32,7 @@ def low_power_spectrum(frames):
 	tappered_frames = hamming_window(frames)
 	fft_frames = np.fft.fft(tappered_frames)
 	lp = np.array(log_power(fft_frames))
-	#plot_frames(lp, name="Log Power Spectrum", scatter=True)
+	plot_frames(lp, title="Log Power Spectrum", scatter=True)
 	return lp, fft_frames
 
 def hamming_window(frames):
@@ -60,7 +60,7 @@ def flux(lp, fft_frames):
 			if abs(fft_frames[n,k]) - abs(fft_frames[n-1,k]) > 0:
 				frame_flux += lp[n,k] - lp[n-1,k]
 		flux.append(frame_flux)
-	plot_flux(flux)
+	#plot_flux(flux)
 	return flux
 
 
@@ -75,26 +75,35 @@ def plot_signal(data, sr:int=44100, endtime:int=6):
 	plt.plot(x, y, 'k', linewidth=0.2)
 	plt.show()
 
-def plot_frames(frames, sr:int=44100, endtime:int=6, hop:int=128, name:str="Frames", scatter:str=False):
+def plot_frames(frames, sr:int=44100, endtime:int=6, hop:int=128, title:str="Frames", scatter:str=False):
 	y = np.array([])
 	for idx, frame in enumerate(frames):
 		if idx == 0: y = frame
 		else: y = np.concatenate((y, frame[128:]), axis=None)
 	y = y[:endtime*sr]
 	x = list(range(len(y)))
+	
 	if scatter:
 		plt.scatter(x, y, c='k', s=0.1)
 	else:
 		plt.plot(x, y, 'k', linewidth=0.1)
-	#plt.ylim([0,20])
-	#plt.yticks([0,5,10,15,20])
-	plt.title(name)
+	
+	plt.xlabel("time/seconds", fontsize=16)
+	if title == "Frames":
+		plt.ylabel("audio", fontsize=16)
+	else:
+		plt.ylabel("freq/kHz", fontsize=16)
+		plt.ylim([0,20])
+		plt.yticks([0,5,10,15,20])
+	plt.title(title, fontsize=18)
+	
 	plt.show()
 
 def plot_flux(flux, sr:int=44100, endtime:int=6):
 	y = flux[:endtime*sr]
 	x = list(range(len(y)))
 	plt.plot(x, flux, 'k', linewidth=0.5)
-	plt.xlabel("time/seconds")
-	plt.ylabel("flux")
+	plt.xlabel("time/seconds", fontsize=16)
+	plt.ylabel("flux", fontsize=16)
+	plt.title("Flux", fontsize=18)
 	plt.show()
