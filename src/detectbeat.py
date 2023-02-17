@@ -7,8 +7,7 @@ def run_beat_detection(filepath, framesize, hop):
 	# OSS
 	frames = oss.overlap(filepath=filepath, framesize=framesize, hop=hop)
 	log_power, fft_frames = oss.low_power_spectrum(frames)
-	#flux = oss.flux(log_power, fft_frames)
-	#
+	flux = oss.flux(log_power, fft_frames)
 
 	# BPD
 	#frames = bpd.overlap(data=flux, framesize=2048, hop=hop)

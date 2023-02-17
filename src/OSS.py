@@ -38,7 +38,7 @@ def low_power_spectrum(frames):
 def hamming_window(frames):
 	M = len(frames[0])
 	t = np.linspace(-M/2, M/2, M)
-	window = np.array([0.5*(1+math.cos(2*math.pi*i/M)) for i in t])
+	window = np.array([0.54 - 0.46*math.cos(2*math.pi*i/(M-1)) for i in t])
 	return np.array([frame*window for frame in frames])
 
 def log_power(fft_frames):
@@ -68,19 +68,19 @@ def flux(lp, fft_frames):
 
 
 # Helpers
-def plot_signal(data, sr):
+def plot_signal(data, sr:int=44100, endtime:int=6):
 	# FIX: add two audio stream check
-	y = data[:6*sr]
+	y = data[:endtime*sr]
 	x = list(range(len(y)))
 	plt.plot(x, y, 'k', linewidth=0.2)
 	plt.show()
 
-def plot_frames(frames, sr:int=44100, hop:int=128, name:str="Frames", scatter:str=False):
+def plot_frames(frames, sr:int=44100, endtime:int=6, hop:int=128, name:str="Frames", scatter:str=False):
 	y = np.array([])
 	for idx, frame in enumerate(frames):
 		if idx == 0: y = frame
 		else: y = np.concatenate((y, frame[128:]), axis=None)
-	y = y[:6*sr]
+	y = y[:endtime*sr]
 	x = list(range(len(y)))
 	if scatter:
 		plt.scatter(x, y, c='k', s=0.1)
@@ -91,9 +91,9 @@ def plot_frames(frames, sr:int=44100, hop:int=128, name:str="Frames", scatter:st
 	plt.title(name)
 	plt.show()
 
-def plot_flux(flux):
-	
-	x = list(range(len(flux)))
+def plot_flux(flux, sr:int=44100, endtime:int=6):
+	y = flux[:endtime*sr]
+	x = list(range(len(y)))
 	plt.plot(x, flux, 'k', linewidth=0.5)
 	plt.xlabel("time/seconds")
 	plt.ylabel("flux")
