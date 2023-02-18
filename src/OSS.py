@@ -26,7 +26,6 @@ def frames(data, framesize, hop):
 			tmp = tmp[-hop:]
 	return np.array(frames)
 
-
 # (2) Log Power Spectrum
 def low_power_spectrum(frames):
 	tappered_frames = hamming_window(frames)
@@ -67,7 +66,7 @@ def flux(lp, fft_frames):
 # (4) Low-pass Filter
 
 
-# Helpers
+# Plotting functions
 def plot_signal(data, sr:int=44100, endtime:int=6):
 	# FIX: add two audio stream check
 	y = data[:endtime*sr]

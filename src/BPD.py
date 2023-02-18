@@ -8,15 +8,4 @@ import OSS as oss
 def overlap(data, framesize:int=2048, hop:int=128):
 	#oss.plot_signal(data)
 	#oss.plot_frames(frames, hop=hop)
-	return frames(data, framesize, hop)
-
-def frames(data, framesize, hop):
-	frames = []
-	tmp = []
-	# add two audio stream check
-	for i in range(len(data)):
-		tmp.append(data[i])
-		if len(tmp) == framesize:
-			frames.append(tmp)
-			tmp = tmp[-hop:]
-	return np.array(frames)
+	return oss.frames(data, framesize, hop)
