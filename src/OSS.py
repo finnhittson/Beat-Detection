@@ -39,7 +39,7 @@ def low_power_spectrum(frames):
 def hamming_window(frames):
     M = len(frames[0])
     t = np.linspace(-M/2, M/2, M)
-    window = np.array([0.54 - 0.46*math.cos(2*math.pi*i/(M-1)) for i in t])
+    window = np.array([0.54 + 0.46*math.cos(2*math.pi*i/(M-1)) for i in t])
     return np.array([frame*window for frame in frames])
 
 # computes the log power spectrum of the frequency bins
@@ -60,19 +60,28 @@ def flux(lp, fft_frames):
 
 
 # (4) Low-pass Filter
+def low_pass_filter(flux):
+    b = scipy.signal.firwin(numtaps=14, cutoff=7, fs=344.5)
+    y = []
+    for i in range(0, 14*math.floor(len(flux)/14), 7):
+        tmp = 0
+        for j in range(14):
+            tmp += b[j]*flux[i+j]
+        y.append(tmp)
+    return y
 
 
 # Plotting functions
 def plot_signal(data, sr:int=44100, endtime:int=6, title:str="Raw Signal"):
-    y = data[:endtime*sr]
+    y = data[:int(endtime*sr)]
     x = list(range(len(y)))
     plt.figure().set_figheight(2)
-    plt.plot(x, y, 'k', linewidth=0.1)
+    plt.plot(x, y, 'k', linewidth=0.2)
     plt.xlabel("time/seconds", fontsize=10)
     plt.ylabel("audio", fontsize=10)
     plt.title(title, fontsize=12)
     labels = list(range(0,7,1))
-    ticks = [sr*i for i in labels]
+    ticks = [int(len(y)/endtime)*i for i in labels]
     plt.xticks(ticks=ticks, labels=labels)
     labels = range(-1, 2, 1)
     ticks = [min(data), 0, max(data)]
