@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
+import scipy
 import numpy as np
 import math
 
@@ -9,7 +10,7 @@ def overlap(filepath, framesize:int=1024, hop:int=128):
 	#plot_signal(data, sr)
 	frames = get_frames(data, framesize, hop)
 	#plot_frames(f, title="Frame")
-	return f
+	return frames
 
 # open and read .wav file
 def read_wav(filepath):
@@ -27,12 +28,12 @@ def get_frames(data, framesize, hop):
             tmp = tmp[hop:]
     return np.array(frames)
 
+
 # (2) Log Power Spectrum
 def low_power_spectrum(frames):
 	tappered_frames = hamming_window(frames)
 	fft_frames = np.fft.fft(tappered_frames)
 	log_power = np.array(comp_log_power(fft_frames))
-	plot_frames(log_power, title="Log Power Spectrum", scatter=True)
 	return log_power, fft_frames
 
 # multiplies frames by the hamming window function

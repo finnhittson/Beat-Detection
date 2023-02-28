@@ -4,14 +4,16 @@ import argparse
 import scipy
 
 def run_beat_detection(filepath, framesize, hop):
-	# OSS
+	# (1) OSS
 	frames = oss.overlap(filepath=filepath, framesize=framesize, hop=hop)
 	log_power, fft_frames = oss.low_power_spectrum(frames)
-	flux = oss.flux(log_power, fft_frames)
+	flux = oss.get_flux(log_power, fft_frames)
 	filtered_signal = oss.low_pass_filter(flux, n=len(flux))
 
-	# BPD
-	#frames = bpd.overlap(data=flux, framesize=2048, hop=hop)
+	# (2) BPD
+	oss_frames = bpd.overlap(data=flux, framesize=2048, hop=hop)
+	Am = bpd.get_gen_autoc(oss_frames=oss_frames, c=0.5)
+
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="Run beat detection algorithm on a song")
