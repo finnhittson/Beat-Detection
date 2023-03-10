@@ -62,13 +62,11 @@ def get_flux(log_power, fft_frames):
 def low_pass_filter(flux, n):
     b = scipy.signal.firwin(numtaps=14, cutoff=7, fs=344.5)
     y = []
-    print(14*math.floor(n/14))
-    for i in range(0, 14*math.floor(len(flux)/14), 7):
-        tmp = 0
+    for i in range(0, 14*math.floor(len(flux)/len(b)), 1):
+        y.append(0)
         for j in range(14):
-            if i+j < n:
-                tmp += b[j]*flux[i+j]
-        y.append(tmp)
+            if i > j:
+                y[-1] += b[j]*flux[i-j]
     return y
 
 
