@@ -23,3 +23,6 @@ def enhance_harmonics(A):
 		if 4*t < len(A):
 			A[t] += A[4*t]
 	return A
+
+# (4) Pick peaks
+def pick_peaks(
