@@ -49,25 +49,27 @@ def comp_log_power(fft_frames):
 # (3) Flux
 def get_flux(log_power, fft_frames):
 	flux = []
-	for n in range(2,len(log_power)):
-		frame_flux = 0
-		for k in range(len(log_power[n])):
-			if abs(fft_frames[n,k]) - abs(fft_frames[n-1,k]) > 0:
-				frame_flux += log_power[n,k] - log_power[n-1,k]
-		flux.append(frame_flux)
+	for n in range(1,len(log_power)):
+		flux.append(0)
+		N = 0
+		for k in range(1,512):#range(1, len(log_power[n])):
+			if abs(fft_frames[n,k]) > abs(fft_frames[n-1,k]):
+				N += 1
+				flux[-1] += log_power[n,k] - log_power[n-1,k]
+		#print(f"number of fft bins representing positive frequencies: {N}")
 	return flux
 
 
 # (4) Low-pass Filter
-def low_pass_filter(flux, n):
-    b = scipy.signal.firwin(numtaps=14, cutoff=7, fs=344.5)
-    y = []
-    for i in range(0, 14*math.floor(len(flux)/len(b)), 1):
-        y.append(0)
-        for j in range(14):
-            if i > j:
-                y[-1] += b[j]*flux[i-j]
-    return y
+def low_pass_filter(flux):
+	b = scipy.signal.firwin(numtaps=14, cutoff=7, fs=344.5)
+	y = []
+	for n in range(len(flux)):
+		y.append(0)
+		for i in range(14):
+			if n > i:
+				y[-1] += b[i]*flux[n-i]
+	return y
 
 
 # Plotting functions
@@ -90,7 +92,7 @@ def plot_signal(data, sr:int=44100, stop:int=6, title:str="Raw Signal"):
 def plot_frames(frames, sr:int=44100, stop:int=6, framesize:int=1024, hop:int=128, title:str="Overlap", scatter:str=False):
     y = np.array([frames[0]])
     for frame in frames[1:]:
-            y = np.concatenate((y, frame[-128:]), axis=None)
+            y = np.concatenate((y, frame[128:]), axis=None)
     x = list(range(len(y)))
     plt.figure().set_figheight(2)
     if scatter:
@@ -102,7 +104,7 @@ def plot_frames(frames, sr:int=44100, stop:int=6, framesize:int=1024, hop:int=12
     if title == "Overlap":
         plt.ylabel("audio", fontsize=10)
         labels = range(-1, 2, 1)
-        ticks = [min(data), 0, max(data)]
+        ticks = [min(abs(frames)), 0, max(abs(frames))]
         plt.yticks(ticks=ticks, labels=labels)
     else:
         plt.ylabel("freq/kHz", fontsize=10)

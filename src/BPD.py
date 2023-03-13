@@ -24,5 +24,3 @@ def enhance_harmonics(A):
 			A[t] += A[4*t]
 	return A
 
-# (4) Pick peaks
-def pick_peaks(
