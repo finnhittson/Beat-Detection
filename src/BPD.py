@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 from scipy.io import wavfile
 import numpy as np
 import math
@@ -6,8 +5,8 @@ import OSS as oss
 
 # (1) Overlap
 def overlap(data, framesize:int=2048, hop:int=128):
-	#oss.plot_signal(data)
-	#oss.plot_frames(frames, hop=hop)
+	#plotters.plot_signal(data)
+	#plotters.plot_frames(frames, hop=hop)
 	return oss.get_frames(data, framesize, hop)
 
 # (2) Generalized autocorrelation 
@@ -25,7 +24,7 @@ def enhance_harmonics(A):
 	return A
 
 # (4) Pick peaks
-def pick_peaks(A, framesize:int=2048, hop:int=128):
+def pick_peaks(A, hop:int=128):
 	y = [np.array(A[0])]
 	for frame in A[1:]:
 		y = np.concatenate((y, A[-hop:]), axis=None)
@@ -84,19 +83,3 @@ def create_pulse_train(P):
 	indices = [int(i*P) for i in [0, 1, 1.5, 2, 3, 4, 4.5, 6]]
 	amp = [2, 1, 0.5, 1.5, 1.5, 0.5, 0.5, 0.5]
 	return amp, indices
-
-# Plotting functions
-def plot_correlation(A, indices:list=None, values:list=None, title:str="set me"):
-	plt.figure().set_figheight(2)
-	plt.plot(abs(A[0][98:414]))
-	if indices is not None and values is not None:
-		for i in range(len(indices)):
-			plt.scatter(indices[i], abs(values[i]), c='k', s=15, marker='s', zorder=10)
-
-	ticks = np.arange(2, 303, 100)
-	labels = np.arange(100, 401, 100)
-	plt.xticks(ticks=ticks, labels=labels)
-	plt.xlabel("lag (samples)")
-	plt.ylabel("mag.")
-	plt.title(title)
-	plt.show()

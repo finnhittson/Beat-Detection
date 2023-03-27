@@ -1,15 +1,15 @@
-import matplotlib.pyplot as plt
 from scipy.io import wavfile
 import scipy
 import numpy as np
 import math
+import plotters
 
 # (1) Overlap
 def overlap(filepath, framesize:int=1024, hop:int=128):
 	sr, data = read_wav(filepath)
-	#plot_signal(data, sr)
+	#plotters.plot_signal(data, sr)
 	frames = get_frames(data, framesize, hop)
-	#plot_frames(f, title="Frame")
+	#plotters.plot_frames(f, title="Frame")
 	return frames
 
 # open and read .wav file
@@ -71,88 +71,3 @@ def low_pass_filter(flux):
 				y[-1] += b[i]*flux[n-i]
 	return y
 
-
-# Plotting functions
-def plot_signal(data, sr:int=44100, stop:int=6, title:str="Raw Signal"):
-    y = data[:int(stop*sr)]
-    x = list(range(len(y)))
-    plt.figure().set_figheight(2)
-    plt.plot(x, y, 'k', linewidth=0.2)
-    plt.xlabel("time/seconds", fontsize=10)
-    plt.ylabel("audio", fontsize=10)
-    plt.title(title, fontsize=12)
-    labels = list(range(0,7,1))
-    ticks = [int(len(y)/stop)*i for i in labels]
-    plt.xticks(ticks=ticks, labels=labels)
-    labels = range(-1, 2, 1)
-    ticks = [min(data), 0, max(data)]
-    plt.yticks(ticks=ticks, labels=labels)
-    plt.show()
-
-def plot_frames(frames, sr:int=44100, framesize:int=1024, hop:int=128, title:str="Overlap", scatter:str=False):
-	if len(frames) > framesize:
-		y = np.array([frames[0]])
-		for frame in frames[1:]:
-			y = np.concatenate((y, frame[-hop:]), axis=None)
-	else: 
-		y = frames
-
-	x = list(range(len(y)))
-	plt.figure().set_figheight(2)
-	if scatter:
-		plt.scatter(x, y, c='k', s=0.1, marker='.')
-	else:
-		plt.plot(x, y, 'k', linewidth=0.2)
-
-	plt.xlabel("time/seconds", fontsize=10)
-	if title == "Overlap":
-		plt.ylabel("audio", fontsize=10)
-		labels = range(-1, 2, 1)
-		ticks = [min(abs(frames)), 0, max(abs(frames))]
-		plt.yticks(ticks=ticks, labels=labels)
-	else:
-		plt.ylabel("freq/kHz", fontsize=10)
-		#plt.yticks([0,5,10,15,20])
-
-	labels = np.arange(0,len(y)/sr+1,1)
-	ticks = [sr*i for i in labels]
-	plt.xticks(ticks=ticks, labels=labels)
-	plt.title(title, fontsize=12)
-	plt.show()
-
-def plot_log_spectrum(fft_frames, framesize, hop, sr):
-    fft_frames = abs(fft_frames)
-    plt.figure().set_figheight(2)
-    t = [[j+hop*i for j in range(framesize)] for i in range(len(fft_frames))]
-    y = fft_frames.flatten()
-    plt.scatter(t, y, c='k', s=0.1)
-
-    plt.xlabel("time/seconds")
-    plt.ylabel("freq/kHz")
-    plt.title("Log Power Spectrum")
-    #plt.yscale("log")
-
-    labels = list(range(0,7,1))
-    ticks = [sr*i for i in labels]
-    plt.xticks(ticks=ticks, labels=labels)
-
-    plt.show()
-
-def plot_flux(y):
-	plt.figure().set_figheight(2)
-
-	x = list(range(len(y)))
-	plt.plot(x, y, 'k', linewidth=0.5)
-	
-	plt.xlabel("time/seconds", fontsize=10)
-	plt.ylabel("flux", fontsize=10)
-	plt.title("Flux", fontsize=12)
-	
-	labels = list(range(0,7,1))
-	ticks = [len(y)*i/6 for i in labels]
-	plt.xticks(ticks=ticks, labels=labels)
-	labels = [0, 20, 40, 60, 80]
-	ticks = [max(y)*i/80 for i in labels]
-	plt.yticks(ticks=ticks, labels=labels)
-	
-	plt.show()
