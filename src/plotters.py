@@ -101,7 +101,7 @@ def plot_correlation(A, indices:list=None, values:list=None, title:str="set me")
 	plt.show()
 
 
-def plot_gaussian(Lm, g):
+def plot_gaussian(Lm, g, title:str="set me"):
 	plt.figure().set_figheight(2)
 	if isinstance(Lm, int):
 		y = [g(Lm, x) for x in range(414)]
@@ -110,9 +110,9 @@ def plot_gaussian(Lm, g):
 		plt.plot(Lm)
 	else:
 		print(f"type {type(Lm)} not supported")
-		
+
 	plt.ylim([0,0.05])
-	plt.title("Convert to Gaussian")
+	plt.title(title)
 	plt.xlabel("lag (samples)")
 	plt.ylabel("mag.")
 	plt.show()
