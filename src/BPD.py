@@ -42,6 +42,47 @@ def pick_peaks(A, framesize:int=2048, hop:int=128):
 	values = peaks[1]
 	return indices[-10:], values[-10:]
 
+# (5) Evaluate pulse trains
+def evaluate_pulse_train(peaks, frame):
+	ccs = []
+	for P in peaks:
+		amp, indices = create_pulse_train(P)
+		ccs.append(moving_dot_product(P, frame, amp, indices))
+
+	SCv, SCx = max_var_score(ccs)
+	SCv_sum = sum(SCv)
+	SCx_sum = sum(SCx)
+	SC = [SCv[i]/SCv_sum + SCx[i]/SCx_sum for i in range(len(SCv))]
+	tempo_idx = max(list(range(len(SC))), key=SC.__getitem__)
+	return peaks[tempo_idx]
+
+def max_var_score(ccs):
+	SCv = []
+	SCx = []
+	for cc in ccs:
+		SCv.append(variance(cc))
+		SCx.append(max(cc))
+	return SCv, SCx
+
+def variance(x):
+	n = len(x)
+	x_bar = sum(x)/n
+	return math.sqrt(sum([(x[i]-x_bar)**2 for i in range(n)])/(n-1))
+
+def moving_dot_product(P, frame, amp, indices):
+	cc_values = []
+	for phase in range(P):
+		cc_values.append(0)
+		if indices[-1]+phase < len(frame):
+			for idx, index in enumerate(indices):
+				cc_values[-1] += frame[index+phase]*amp[idx]
+	return cc_values
+
+def create_pulse_train(P):
+	indices = [int(i*P) for i in [0, 1, 1.5, 2, 3, 4, 4.5, 6]]
+	amp = [2, 1, 0.5, 1.5, 1.5, 0.5, 0.5, 0.5]
+	return amp, indices
+
 # Plotting functions
 def plot_correlation(A, indices:list=None, values:list=None, title:str="set me"):
 	plt.figure().set_figheight(2)
