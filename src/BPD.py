@@ -62,7 +62,9 @@ def max_var_score(ccs):
 	for cc in ccs:
 		SCv.append(variance(cc))
 		SCx.append(max(cc))
-	return SCv, SCx
+	SCv = np.array(SCv)
+	SCx = np.array(SCx)
+	return SCv/np.linalg.norm(SCv), SCx/np.linalg.norm(SCx)
 
 def variance(x):
 	n = len(x)
