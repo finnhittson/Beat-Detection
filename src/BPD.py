@@ -9,10 +9,12 @@ def overlap(data, framesize:int=2048, hop:int=128):
 	#plotters.plot_frames(frames, hop=hop)
 	return oss.get_frames(data, framesize, hop)
 
+
 # (2) Generalized autocorrelation 
 def generalized_autocorrelation(frames, c:float=0.5):
 	dft = np.fft.fft(frames)
 	return 	np.fft.ifft(pow(abs(dft), c))
+
 
 # (3) Enhance harmonics
 def enhance_harmonics(A):
@@ -23,12 +25,19 @@ def enhance_harmonics(A):
 			A[t] += A[4*t]
 	return A
 
+
 # (4) Pick peaks
-def pick_peaks(A, hop:int=128):
-	y = [np.array(A[0])]
-	for frame in A[1:]:
-		y = np.concatenate((y, A[-hop:]), axis=None)
-	A = y[98:414]
+def pick_peaks(A):
+	y = flatten_signal(A)
+	indices = []
+	values = []
+	for i in range(98, len(y), 316):
+		idxs, vals = find_local_maximums(y[i:i+316])
+		indices.append(idxs)
+		values.append(vals)
+	return indices, values
+
+def find_local_maximums(A):
 	peaks = []
 	last = 0
 	for i in range(1, len(A)-1):
@@ -41,12 +50,13 @@ def pick_peaks(A, hop:int=128):
 	values = peaks[1]
 	return indices[-10:], values[-10:]
 
+
 # (5) Evaluate pulse trains
 def evaluate_pulse_train(peaks, frame):
 	ccs = []
-	for P in peaks:
-		amp, indices = create_pulse_train(P)
-		ccs.append(moving_dot_product(P, frame, amp, indices))
+	for peak in peaks:
+		amp, indices = create_pulse_train(peak)
+		ccs.append(moving_dot_product(peak, frame, amp, indices))
 
 	SCv, SCx = max_var_score(ccs)
 	SCv_sum = sum(SCv)
@@ -70,9 +80,9 @@ def variance(x):
 	x_bar = sum(x)/n
 	return math.sqrt(sum([(x[i]-x_bar)**2 for i in range(n)])/(n-1))
 
-def moving_dot_product(P, frame, amp, indices):
+def moving_dot_product(peak, frame, amp, indices):
 	cc_values = []
-	for phase in range(P):
+	for phase in range(peak):
 		cc_values.append(0)
 		if indices[-1]+phase < len(frame):
 			for idx, index in enumerate(indices):
@@ -83,3 +93,9 @@ def create_pulse_train(P):
 	indices = [int(i*P) for i in [0, 1, 1.5, 2, 3, 4, 4.5, 6]]
 	amp = [2, 1, 0.5, 1.5, 1.5, 0.5, 0.5, 0.5]
 	return amp, indices
+
+def flatten_signal(frames, hop:int=128):
+	y = frames[0]
+	for frame in frames[1:]:
+		y = np.concatenate((y, frame[-128:]))
+	return y

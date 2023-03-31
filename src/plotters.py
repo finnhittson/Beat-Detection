@@ -85,9 +85,9 @@ def plot_flux(y):
 	
 	plt.show()
 
-def plot_correlation(A, indices:list=None, values:list=None, title:str="set me"):
+def plot_correlation(A, start:int=98, stop:int=414, indices:list=None, values:list=None, title:str="set me"):
 	plt.figure().set_figheight(2)
-	plt.plot(abs(A[0][98:414]))
+	plt.plot(abs(A[start:stop]))
 	if indices is not None and values is not None:
 		for i in range(len(indices)):
 			plt.scatter(indices[i], abs(values[i]), c='k', s=15, marker='s', zorder=10)
@@ -100,7 +100,6 @@ def plot_correlation(A, indices:list=None, values:list=None, title:str="set me")
 	plt.title(title)
 	plt.show()
 
-
 def plot_gaussian(Lm, g, title:str="set me"):
 	plt.figure().set_figheight(2)
 	if isinstance(Lm, int):
@@ -111,7 +110,7 @@ def plot_gaussian(Lm, g, title:str="set me"):
 	else:
 		print(f"type {type(Lm)} not supported")
 
-	plt.ylim([0,0.05])
+	#plt.ylim([0,0.05])
 	plt.title(title)
 	plt.xlabel("lag (samples)")
 	plt.ylabel("mag.")
