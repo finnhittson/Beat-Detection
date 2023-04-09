@@ -62,11 +62,10 @@ def comp_flux(log_power):
 # (4) Low-pass Filter
 def low_pass_filter(flux):
 	b = scipy.signal.firwin(numtaps=14, cutoff=7, fs=344.5)
-	y = []
+	y = np.zeros(len(flux))
 	for n in range(len(flux)):
-		y.append(0)
 		for i in range(14):
 			if n > i:
-				y[-1] += b[i]*flux[n-i]
+				y[n] += b[i]*flux[n-i]
 	return y
 
