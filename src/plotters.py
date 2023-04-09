@@ -49,11 +49,10 @@ def plot_frames(frames, sr:int=44100, framesize:int=1024, hop:int=128, title:str
 	plt.show()
 
 def plot_log_spectrum(fft_frames, framesize, hop, sr):
-    fft_frames = abs(fft_frames)
     plt.figure().set_figheight(2)
     t = [[j+hop*i for j in range(framesize)] for i in range(len(fft_frames))]
     y = fft_frames.flatten()
-    plt.scatter(t, y, c='k', s=0.1)
+    plt.scatter(list(range(len(y))), y, c='k', s=0.1)
 
     plt.xlabel("time/seconds")
     plt.ylabel("freq/kHz")

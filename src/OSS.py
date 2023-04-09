@@ -43,20 +43,19 @@ def hamming_window(frames):
 
 # computes the log power spectrum of the frequency bins
 def comp_log_power(fft_frames):
-    return [[math.log(abs(comp)) for comp in frame] for frame in fft_frames]
+    return [[math.log(1+1000*abs(comp)) for comp in frame] for frame in fft_frames]
 
 
 # (3) Flux
-def get_flux(log_power, fft_frames):
-	flux = []
-	for n in range(1,len(log_power)):
-		flux.append(0)
-		N = 0
-		for k in range(1,512):#range(1, len(log_power[n])):
-			if abs(fft_frames[n,k]) > abs(fft_frames[n-1,k]):
-				N += 1
-				flux[-1] += log_power[n,k] - log_power[n-1,k]
-		#print(f"number of fft bins representing positive frequencies: {N}")
+def comp_flux(log_power):
+	flux = np.zeros(log_power.shape[0])
+	prev = np.zeros(log_power.shape[1])
+	for i in range(log_power.shape[0]):
+		diff = log_power[i] - prev
+		diff_reduced = diff[1:]
+		diff_clipped = diff_reduced.clip(min=0)
+		prev = np.copy(log_power[i])
+		flux[i] = sum(diff_clipped)
 	return flux
 
 
