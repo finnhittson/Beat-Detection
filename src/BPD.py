@@ -50,7 +50,7 @@ def find_local_maximums(A):
 	peaks = []
 	last = 0
 	for i in range(1, len(A)-1):
-		if A[i] >= A[i-1] and A[i] >= A[i+1] and i-1 != last:
+		if A[i-1] <= A[i] >= A[i+1] and i-1 != last:
 			last = i
 			peaks.append((i, A[i]))
 	peaks.sort(key=lambda a: a[1])
@@ -78,30 +78,24 @@ def max_var_score(ccs):
 	SCv = []
 	SCx = []
 	for cc in ccs:
-		SCv.append(variance(cc))
+		SCv.append(np.var(cc))
 		SCx.append(max(cc))
 	SCv = np.array(SCv)
 	SCx = np.array(SCx)
 	return SCv/np.linalg.norm(SCv), SCx/np.linalg.norm(SCx)
 
-def variance(x):
-	n = len(x)
-	x_bar = sum(x)/n
-	return math.sqrt(sum([(x[i]-x_bar)**2 for i in range(n)])/(n-1))
-
 def moving_dot_product(peak, frame, amp, indices):
-	cc_values = []
+	cc_values = np.zeros(peak)
 	for phase in range(peak):
-		cc_values.append(0)
 		if indices[-1]+phase < len(frame):
 			for idx, index in enumerate(indices):
-				cc_values[-1] += frame[index+phase]*amp[idx]
+				cc_values[phase] += frame[index+phase]*amp[idx]
 	return cc_values
 
 def create_pulse_train(P):
-	indices = [int(i*P) for i in [0, 1, 1.5, 2, 3, 4, 4.5, 6]]
-	amp = [2, 1, 0.5, 1.5, 1.5, 0.5, 0.5, 0.5]
-	return amp, indices
+	indices = np.array([0, 1, 1.5, 2, 3, 4, 4.5, 6])*P
+	amp = np.array([2, 1, 0.5, 1.5, 1.5, 0.5, 0.5, 0.5])
+	return amp, indices.astype(np.int32)
 
 def flatten_signal(frames, hop:int=128):
 	y = frames[0]
