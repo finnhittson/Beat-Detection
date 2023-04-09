@@ -1,4 +1,5 @@
 from scipy.io import wavfile
+import scipy
 import numpy as np
 import math
 import OSS as oss
@@ -11,9 +12,14 @@ def overlap(data, framesize:int=2048, hop:int=128):
 
 
 # (2) Generalized autocorrelation 
-def generalized_autocorrelation(frames, c:float=0.5):
-	dft = np.fft.fft(frames)
-	return 	np.fft.ifft(pow(abs(dft), c))
+def autocorrelation(signal, c:float=0.5):
+    N = signal.shape[1]
+    ffts = scipy.fftpack.fft(signal, 2*N, axis=1) / (2*N)
+    ffts_abs = abs(ffts)
+    ffts_abs_scaled = ffts_abs**c
+    scratch = (scipy.fftpack.ifft(ffts_abs_scaled, axis=1).real)*(2*N)
+    xcorr = scratch[:,:N]
+    return xcorr
 
 
 # (3) Enhance harmonics
