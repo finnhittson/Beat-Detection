@@ -12,6 +12,10 @@ def overlap(data, framesize:int=2048, hop:int=128):
 
 
 # (2) Generalized autocorrelation 
+def generalized_autocorrelation(frames, c:float=0.5):
+	dft = np.fft.fft(a=frames)
+	return 	np.fft.ifft(pow(abs(dft), c)).real
+
 def autocorrelation(signal, c:float=0.5):
     N = signal.shape[1]
     ffts = scipy.fftpack.fft(signal, 2*N, axis=1) / (2*N)
@@ -20,7 +24,6 @@ def autocorrelation(signal, c:float=0.5):
     scratch = (scipy.fftpack.ifft(ffts_abs_scaled, axis=1).real)*(2*N)
     xcorr = scratch[:,:N]
     return xcorr
-
 
 # (3) Enhance harmonics
 def enhance_harmonics(A):

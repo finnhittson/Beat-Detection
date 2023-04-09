@@ -13,7 +13,8 @@ def run_beat_detection(filepath, framesize, hop):
 	# (2) BPD
 	oss_frames = bpd.overlap(data=flux, framesize=2048, hop=hop)
 	Am = bpd.generalized_autocorrelation(oss_frames=oss_frames, c=0.5)
-	enhanced_signal = enhance_harmonics(A=Am)
+	#EAC = enhance_harmonics(A=Am)
+	EAC = Am
 	indices, values = bpd.pick_peaks(A=EAC, hop=128)
 	Lm = bpd.evaluate_pulse_train(indices, oss_frames[0])
 
