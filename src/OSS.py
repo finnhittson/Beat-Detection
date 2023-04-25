@@ -47,7 +47,7 @@ def comp_log_power(fft_frames):
 
 
 # (3) Flux
-def comp_flux(log_power):
+def comp_flux_author(log_power):
 	flux = np.zeros(log_power.shape[0])
 	prev = np.zeros(log_power.shape[1])
 	for i in range(log_power.shape[0]):
@@ -58,14 +58,26 @@ def comp_flux(log_power):
 		flux[i] = sum(diff_clipped)
 	return flux
 
+def comp_flux(log_power):
+	flux = np.zeros(len(log_power))
+	for n in range(1, len(log_power)):
+		for k in range(len(log_power[n])):
+			if abs(log_power[n,k]) > abs(log_power[n-1,k]):
+				add = log_power[n,k] - log_power[n-1,k]
+				flux[n] += add
+	return flux
+
 
 # (4) Low-pass Filter
 def low_pass_filter(flux):
-	b = scipy.signal.firwin(numtaps=14, cutoff=7, fs=344.5)
-	y = np.zeros(len(flux))
+	b = scipy.signal.firwin(numtaps=15, cutoff=7, fs=344.5)
+	y = np.zeros(len(flux)+1)
 	for n in range(len(flux)):
-		for i in range(14):
+		for i in range(15):
 			if n > i:
 				y[n] += b[i]*flux[n-i]
 	return y
 
+def low_pass_filter_author(flux):
+	b = scipy.signal.firwin(numtaps=15, cutoff=6/44100/128/2)
+	return scipy.signal.lfilter(b, 1.0, flux)
