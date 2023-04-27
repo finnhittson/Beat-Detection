@@ -4,6 +4,9 @@ import numpy as np
 import math
 import OSS as oss
 
+def ping():
+	print("pong")
+
 # (1) Overlap
 def overlap(data, framesize:int=2048, hop:int=128):
 	#plotters.plot_signal(data)
@@ -38,13 +41,13 @@ def enhance_harmonics(A):
 # (4) Pick peaks
 def pick_peaks(A):
 	y = flatten_signal(A)
-	indices = []
+	indices = [] 
 	values = []
 	for i in range(98, len(y), 316):
 		idxs, vals = find_local_maximums(y[i:i+316])
 		indices.append(idxs)
 		values.append(vals)
-	return indices, values
+	return np.array(indices), np.array(values)
 
 def find_local_maximums(A):
 	peaks = []
@@ -58,6 +61,36 @@ def find_local_maximums(A):
 	indices = peaks[0]
 	values = peaks[1]
 	return indices[-10:], values[-10:]
+
+def find_peaks_author(signal, number=10, peak_neighbors=1):
+    candidates = []
+    signal = flatten_signal(signal)
+    for i in range(4*40+peak_neighbors, 4*180-peak_neighbors-1):
+    #for i in xrange(200, 720):
+        if signal[i-1] < signal[i] > signal[i+1]:
+            ok = True
+            for j in range(i-peak_neighbors, i):
+                if signal[j] >= signal[i]:
+                    ok = False
+            for j in range(i+1, i+peak_neighbors):
+                if signal[j] >= signal[i]:
+                    ok = False
+            if ok:
+                candidates.append( (signal[i], i) )
+    candidates.sort(reverse=True)
+
+    peaks = []
+    #pylab.figure()
+    #pylab.plot(signal)
+    for c in candidates[:number]:
+        index = c[1]
+        mag = c[0]
+        peaks.append(index)
+        #print c
+        #pylab.plot(index, mag, 'o')
+    #pylab.show()
+
+    return np.array(peaks)
 
 
 # (5) Evaluate pulse trains
