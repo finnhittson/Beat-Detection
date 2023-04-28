@@ -65,7 +65,7 @@ def plot_log_spectrum(fft_frames, framesize, hop, sr):
 
     plt.show()
 
-def plot_flux(y):
+def plot_flux(y, title:str="set me!"):
 	plt.figure().set_figheight(2)
 
 	x = list(range(len(y)))
@@ -73,7 +73,7 @@ def plot_flux(y):
 	
 	plt.xlabel("time/seconds", fontsize=10)
 	plt.ylabel("flux", fontsize=10)
-	plt.title("Flux", fontsize=12)
+	plt.title(title, fontsize=12)
 	
 	labels = list(range(0,7,1))
 	ticks = [len(y)*i/6 for i in labels]
