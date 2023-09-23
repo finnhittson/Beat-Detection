@@ -92,7 +92,6 @@ def find_peaks_author(signal, number=10, peak_neighbors=1):
 
     return np.array(peaks)
 
-
 # (5) Evaluate pulse trains
 def evaluate_pulse_train(peaks, frame):
 	ccs = []
@@ -115,7 +114,9 @@ def max_var_score(ccs):
 		SCx.append(max(cc))
 	SCv = np.array(SCv)
 	SCx = np.array(SCx)
-	return SCv/np.linalg.norm(SCv), SCx/np.linalg.norm(SCx)
+	SCv_norm = np.linalg.norm(SCv)
+	SCx_norm = np.linalg.norm(SCx)
+	return SCv / SCv_norm, SCx / SCx_norm
 
 def moving_dot_product(peak, frame, amp, indices):
 	cc_values = np.zeros(peak)

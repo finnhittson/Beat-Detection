@@ -13,7 +13,7 @@ def run_beat_detection(filepath, framesize, hop):
 	filtered_signal = oss.low_pass_filter(flux)
 
 	# (2) BPD
-	oss_frames = bpd.overlap(data=flux, framesize=2048, hop=hop)
+	oss_frames = bpd.overlap(data=filtered_signal, framesize=2048, hop=hop)
 	Am = bpd.generalized_autocorrelation(frames=oss_frames, c=0.5)
 	#EAC = enhance_harmonics(A=Am)
 	indices, values = bpd.pick_peaks(A=Am)
@@ -24,7 +24,7 @@ def run_beat_detection(filepath, framesize, hop):
 	y = acc.accumulate_gauss(Lms=Lms)
 	idxs, vals = bpd.find_local_maximums(np.concatenate((np.zeros(98), y[98:])))
 
-	return 344.5*60/idxs[-1]
+	return round(344.5*60/idxs[-1])
 
 
 if __name__ == "__main__":
@@ -48,4 +48,4 @@ if __name__ == "__main__":
 	parser.set_defaults(framesize=1024, hop=128)
 	args = parser.parse_args()
 	beat_estimate = run_beat_detection(args.path, args.framesize, args.hop)
-	print(beat_estimate)
+	print(f"{beat_estimate} bpm")
