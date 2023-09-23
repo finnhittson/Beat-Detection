@@ -31,5 +31,6 @@ python detectbeat.py --path=ballroom.wav --framesize=1024 --hop=128
 
 ## Acknowledgments
 
-This project was used for a music visualizer in a Spotify web-app, PurdyMusic. Other contributions to this app are from Aaron Orenstein, Walter Graham, Vinayak Sharma, Josh Nagler, and Rupika Pendyala. It was inspired and guided with the help of the authors Graham Percival and George Tzanetakis of the paper Streamlined Tempo Estimation Based on Autocorrelation and Cross-correlation With Pulses. 
-[1] G. Percival and G. Tzanetakis, "Streamlined Tempo Estimation Based on Autocorrelation and Cross-correlation With Pulses," in IEEE/ACM Transactions on Audio, Speech, and Language Processing, vol. 22, no. 12, pp. 1765-1776, Dec. 2014, doi: 10.1109/TASLP.2014.2348916.
+This project was used for a music visualizer in a Spotify web-app, PurdyMusic. Other contributions to this app are from Aaron Orenstein, Walter Graham, Vinayak Sharma, Josh Nagler, and Rupika Pendyala. It was inspired and guided with the help of the authors Graham Percival and George Tzanetakis of the paper Streamlined Tempo Estimation Based on Autocorrelation and Cross-correlation With Pulses.  
+  
+1. G. Percival and G. Tzanetakis, "Streamlined Tempo Estimation Based on Autocorrelation and Cross-correlation With Pulses," in IEEE/ACM Transactions on Audio, Speech, and Language Processing, vol. 22, no. 12, pp. 1765-1776, Dec. 2014, doi: 10.1109/TASLP.2014.2348916.
