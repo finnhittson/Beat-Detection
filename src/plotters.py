@@ -42,13 +42,13 @@ def plot_frames(frames, sr:int=44100, framesize:int=1024, hop:int=128, title:str
 		plt.ylabel("freq/kHz", fontsize=10)
 		#plt.yticks([0,5,10,15,20])
 
-	labels = np.arange(0,len(y)/sr+1,1)
+	labels = np.arange(0,len(y)/sr+1,1).astype("int32")
 	ticks = [sr*i for i in labels]
 	plt.xticks(ticks=ticks, labels=labels)
 	plt.title(title, fontsize=12)
 	plt.show()
 
-def plot_log_spectrum(fft_frames, framesize, hop, sr):
+def plot_log_spectrum(fft_frames, framesize, hop, sr:int=44100):
     plt.figure().set_figheight(2)
     t = [[j+hop*i for j in range(framesize)] for i in range(len(fft_frames))]
     y = fft_frames.flatten()
@@ -57,10 +57,9 @@ def plot_log_spectrum(fft_frames, framesize, hop, sr):
     plt.xlabel("time/seconds")
     plt.ylabel("freq/kHz")
     plt.title("Log Power Spectrum")
-    #plt.yscale("log")
 
-    labels = list(range(0,7,1))
-    ticks = [sr*i for i in labels]
+    labels = list(np.arange(0,7,1))
+    ticks = [int(len(y)/6*i) for i in labels]
     plt.xticks(ticks=ticks, labels=labels)
 
     plt.show()
