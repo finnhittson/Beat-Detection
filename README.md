@@ -1,4 +1,4 @@
-# Beat Detection Algorithm
+# Beat Detection
 
 This algorithm is used to detect the beat of an input signal using signal processing techniques.
 
